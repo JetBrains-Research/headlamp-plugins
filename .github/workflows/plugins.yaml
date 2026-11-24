@@ -98,3 +98,15 @@ jobs:
       - name: Build image
         working-directory: .
         run: docker build --build-arg PLUGIN="$PLUGIN" .
+
+  gate:
+    name: Plugin checks
+    needs: [changes, check]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require passing checks
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: |
+          echo "::error::A plugin check failed or was cancelled."
+          exit 1
