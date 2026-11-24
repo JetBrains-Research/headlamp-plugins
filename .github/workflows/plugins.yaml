@@ -1,0 +1,100 @@
+name: Plugins
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash # -eo pipefail
+
+jobs:
+  changes:
+    name: Find changed plugins
+    runs-on: ubuntu-latest
+    outputs:
+      plugins: ${{ steps.plugins.outputs.plugins }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - id: plugins
+        env:
+          # Pull requests run on the merge commit, whose first parent is the base branch.
+          BASE: ${{ github.event_name == 'pull_request' && 'HEAD^1' || github.event.before }}
+        run: |
+          all_plugins() {
+            for pkg in */package.json; do
+              if grep -q '@kinvolk/headlamp-plugin' "$pkg"; then dirname "$pkg"; fi
+            done
+          }
+
+          if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            echo "No usable base commit, checking all plugins."
+            selected=$(all_plugins)
+          else
+            changed=$(git diff --name-only "$BASE" HEAD)
+            if grep -qE '^(\.github/|scripts/|Dockerfile$|\.dockerignore$)' <<<"$changed"; then
+              echo "Shared files changed, checking all plugins."
+              selected=$(all_plugins)
+            else
+              selected=$(all_plugins | while read -r plugin; do
+                if grep -q "^$plugin/" <<<"$changed"; then echo "$plugin"; fi
+              done)
+            fi
+          fi
+
+          json=$(jq -cn '$ARGS.positional' --args $selected)
+          echo "Plugins: $json"
+          echo "plugins=$json" >> "$GITHUB_OUTPUT"
+
+  check:
+    name: ${{ matrix.plugin }}
+    needs: changes
+    if: needs.changes.outputs.plugins != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        plugin: ${{ fromJson(needs.changes.outputs.plugins) }}
+    env:
+      PLUGIN: ${{ matrix.plugin }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.plugin }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: ${{ matrix.plugin }}/package-lock.json
+
+      - name: Validate release metadata
+        working-directory: .
+        run: node scripts/release-info.mjs "$PLUGIN"
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm run tsc
+      - run: npm run lint
+      - run: npm run format -- --check
+      - run: npm run test --if-present
+
+      - name: Package
+        run: npm run package -- . "$RUNNER_TEMP/package"
+
+      - name: Build image
+        working-directory: .
+        run: docker build --build-arg PLUGIN="$PLUGIN" .
