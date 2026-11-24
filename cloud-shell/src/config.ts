@@ -12,7 +12,7 @@ export interface PluginConfig {
 }
 
 export const DEFAULTS: PluginConfig = {
-  image: '',
+  image: 'ghcr.io/jetbrains-research/cloud-shell:latest',
   namespace: 'default',
   serviceAccountName: 'default',
 };

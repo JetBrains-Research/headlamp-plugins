@@ -58,3 +58,10 @@ initContainers:
 
 The plugin files live at `/plugins/<plugin>/` inside the image, if you need
 a different copy command.
+
+## Cloud shell image
+
+The default `cloud-shell` session image, `ghcr.io/jetbrains-research/cloud-shell:latest`,
+is defined inline in the **Publish Cloud Shell image** workflow.
+It is rebuilt weekly, when the workflow changes on `main`, and on manual dispatch.
+Any replacement image must keep running with its default command.
