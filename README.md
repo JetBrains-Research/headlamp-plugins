@@ -1,5 +1,7 @@
 # JetBrains Research Headlamp Plugins
 
+[![JetBrains Research](https://jb.gg/badges/research.svg)](https://github.com/JetBrains#jetbrains-on-github)
+
 [Headlamp](https://headlamp.dev) plugins built and used by JetBrains Research.
 
 ## Plugins
@@ -11,6 +13,13 @@
 | [gke-nvidia-gpu](./gke-nvidia-gpu)     | NVIDIA GPU overview and topology for GKE nodes.                                     |
 | [network-policies](./network-policies) | Visualizes `NetworkPolicy` resources.                                               |
 | [themes](./themes)                     | JetBrains themes for Headlamp.                                                      |
+
+## Installing
+
+Each release ships a `headlamp-plugin package` archive on [GitHub Releases][releases]
+and a container image at `ghcr.io/jetbrains-research/headlamp-plugin-<plugin>`.
+To load a plugin into an in-cluster Headlamp through an init container,
+see [Using an image](docs/releases.md#using-an-image).
 
 ## Layout
 
@@ -40,8 +49,18 @@ npx --yes @kinvolk/headlamp-plugin create $NAME
 
 Then set `"name": "@jetbrains/$NAME"`, keep the version at `0.1.0`,
 and make sure `package.json` has the `package` script (`headlamp-plugin package`).
-Add a row to the table above.
+Add a row to the table above, and add the directory to the `npm` entry in `.github/dependabot.yaml`.
 
 ## Releases
 
 See [Releasing a plugin](docs/releases.md).
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Report vulnerabilities as described in [SECURITY.md](SECURITY.md).
+
+## License
+
+See [LICENSE](LICENSE).
+
+[releases]: https://github.com/JetBrains-Research/headlamp-plugins/releases
