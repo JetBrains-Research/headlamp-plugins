@@ -1,6 +1,6 @@
 # Builds one plugin: docker build --build-arg PLUGIN=<directory> .
 # Plugin output is plain JS, so the build stage runs natively on the build host for every target platform.
-FROM --platform=$BUILDPLATFORM node:22-alpine AS build
+FROM --platform=$BUILDPLATFORM node:26-alpine AS build
 ARG PLUGIN
 RUN test -n "$PLUGIN" || { echo "PLUGIN build argument is required" >&2; exit 1; }
 WORKDIR /src/${PLUGIN}
