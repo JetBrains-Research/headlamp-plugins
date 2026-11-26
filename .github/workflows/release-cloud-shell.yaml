@@ -47,7 +47,7 @@ jobs:
             --label "org.opencontainers.image.source=$SOURCE" \
             --label "org.opencontainers.image.revision=$GITHUB_SHA" \
             --label "org.opencontainers.image.created=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-            --label "org.opencontainers.image.authors=jbr-engineering-squad@jetbrains.com" <<'EOF'
+            --label "org.opencontainers.image.authors=ozren.dabic@jetbrains.com" <<'EOF'
           FROM cgr.dev/chainguard/kubectl:latest-dev
           ENTRYPOINT []
           CMD ["sleep", "infinity"]
