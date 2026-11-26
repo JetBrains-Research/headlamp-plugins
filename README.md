@@ -55,6 +55,10 @@ Add a row to the table above, and add the directory to the `npm` entry in `.gith
 
 See [Releasing a plugin](docs/releases.md).
 
+## Dependency updates
+
+See [Updating dependencies](docs/dependencies.md).
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Report vulnerabilities as described in [SECURITY.md](SECURITY.md).
