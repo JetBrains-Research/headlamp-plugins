@@ -74,9 +74,8 @@ export function podGpuLimits(pod: KubePod): number {
 
 /**
  * Map of node name -> GPUs currently allocated, summed from the GPU requests of
- * every scheduled (Running/Pending) pod. Mirrors the accounting in
- * jbr-cluster-info's backend: a GPU is "allocated" as soon as a pod requesting
- * it lands on a node, regardless of whether the workload is actually busy.
+ * every scheduled (Running/Pending) pod. A GPU is "allocated" as soon as a pod
+ * requesting it lands on a node, regardless of whether the workload is actually busy.
  */
 export function allocatedGpusByNode(pods: KubePod[]): Map<string, number> {
   const used = new Map<string, number>();
