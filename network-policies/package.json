@@ -29,7 +29,7 @@
     ]
   },
   "dependencies": {
-    "@xyflow/react": "^12.9.3"
+    "@xyflow/react": "^13.0.3"
   },
   "devDependencies": {
     "@kinvolk/headlamp-plugin": "^0.14.0"
